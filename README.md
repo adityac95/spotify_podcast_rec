@@ -9,6 +9,8 @@ In the README, we describe the data gathering process, the preprocessing and cle
 ## Table of contents
 1. [Data gathering](#data-gathering)
 2. [Preprocessing and cleanup](#preprocessing)
+	1. [Transcripts](#transcripts)
+	2. [Podcast categories](#categories)
 3. [Encoding the transcripts](#encoding)
 	1. [TFIDF and MiniLM-L6-v2](#options)
 	2. [Evaluation](#evaluation)
@@ -16,13 +18,19 @@ In the README, we describe the data gathering process, the preprocessing and cle
 
 ## Data gathering <a name="data-gathering"></a>
 
-We used a [podcast dataset provided by Spotify](https://podcastsdataset.byspotify.com/).[^1] This dataset contains over 200,000 podcast episodes with associated audio, transcripts and metadata. We worked with a subset of around 40,000 podcasts for this project, using only the transcripts and metadata.
+We used a [podcast dataset provided by Spotify](https://podcastsdataset.byspotify.com/).[^1] This dataset contains over 200,000 podcast episodes in English and Portuguese with associated audio, transcripts and metadata. We worked with a subset of around 40,000 English-language podcasts for this project, using only the transcripts and metadata.
 
 [^1]: The data can be requested at the linked website; we cannot provide the original data on Github. 
 
 ## Preprocessing and cleanup <a name="preprocessing"></a>
 
-The transcripts were stored in .json files 
+The transcript cleaning took place in this notebook.
+
+### Transcripts
+
+The provided transcripts were stored in JSON files and were split up into chunks. 
+
+### Podcast categories
 
 ## Encoding the transcripts <a name="encoding"></a>
 
