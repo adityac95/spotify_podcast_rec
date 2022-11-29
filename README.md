@@ -4,7 +4,7 @@ by Aditya Chander, Ritika Khurana, Taylor Mahler and Yuchen Luo
 We built a podcast recommendation engine that suggests episodes to a listener based on either a previous episode that they've heard or an episode description that they can input with freeform text entry. This project was built for the Erdos Institute Data Science bootcamp, Fall 2022.
 ***
 
-In the README, we describe the data gathering process, the preprocessing and cleanup, the architecture of the classifier (along with its flaws), and the web-frontend ([link](http://app.sayantankhan.io/search) to web-frontend).
+In the README, we describe the data gathering process, the preprocessing and cleanup, the chosen encodings of the pocasts, and the Streamlit app.
 
 ## Table of contents
 1. [Data gathering](#data-gathering)
@@ -24,7 +24,7 @@ We used a [podcast dataset provided by Spotify](https://podcastsdataset.byspotif
 
 ## Preprocessing and cleanup <a name="preprocessing"></a>
 
-The transcript cleaning and category extraction took place in this [notebook](TODO: LINK HERE). 
+The majority of transcript cleaning and category extraction took place in [this notebook](https://github.com/adityac95/erdos_spotify_podcast_rec/blob/main/data_inspection_cleaning_CLEAN.ipynb). 
 
 ### Transcripts <a name="transcripts"></a>
 
@@ -32,23 +32,36 @@ The provided transcripts were stored in JSON files. The JSON files contained chu
 
 ### Podcast categories <a name="categories"></a>
 
-Each show in the podcast dataset came with RSS feeds in XML format. These RSS feeds contained a lot of metadata, including the categories that the podcaster assigned to the show. These categories were extracted using the `BeautifulSoup` library  
+Each show in the podcast dataset came with RSS feeds in XML format. These RSS feeds contained a lot of metadata, including the categories that the podcaster assigned to the show (which were chosen according to a set of categories provided by [Apple](https://podcasts.apple.com/us/genre/podcasts/id26). These categories were extracted using the `BeautifulSoup` library.
+
+The categories themselves contained widely varying numbers of shows and were of differing levels of granularity. However, the iTunes categorisation system is hierarchical (for instance, baseball and basketball podcasts are listed under the "Sports" category). Mapping the granular subcategories from the original data to the parent categories in Apple resulted in a reduction in the number of categories from 117 to 19, a far more tractable number for our purposes. This recategorisation procedure is detailed in [this notebook](https://github.com/adityac95/erdos_spotify_podcast_rec/blob/main/transcript_tagging_embedding_CLEAN.ipynb).
 
 ## Encoding the transcripts <a name="encoding"></a>
 
 ### TFIDF and MiniLM-L6-v2 <a name="options"></a>
 
+We explored two different encodings for our podcast transcripts: term frequency-inverse document frequency (TFIDF) scores and transcript embeddings from a transformer model (MiniLM-L6-v2).[^2] The TFIDF weights were computed for the top ??? most commonly occurring words in the dataset, excluding stopwords. The 384-dimensional MiniLM-L6-v2 embeddings were computed using the pretrained model provided by the [`sentence_transformers`](https://www.sbert.net/) library.
+
+[^2]: Information about the MiniLM model is available [here](https://arxiv.org/pdf/2002.10957.pdf).
+
+[This notebook](TODO:REPLACE) generates the TFIDF weights, and [this notebook](https://github.com/adityac95/erdos_spotify_podcast_rec/blob/main/transcript_tagging_embedding_CLEAN.ipynb) generates the MiniLM-L6-v2 embeddings.
+
 ### Evaluation <a name="evaluation"></a>
+
+We reasoned that a good encoding would on average rate episodes from different categories as *less similar to each other* compared to episodes from within a category. The higher the proportion of category pairs for which this is the case, the better the encoding. For both TFIDF and MiniLM-L6-v2, we performed the following steps:
+
+1. We sampled 50 random podcast episodes from each of the 19 categories.
+2. For every *ordered* pair of categories $A$ and $B$, we computed the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) between every episode in $A$ with every episode in $B$ (between-category similarities), as well as every episode in $A$ with every other episode in $A$ (within-category similarities).
+3. The between- and within-category similarity scores were compared using a one-tailed *t*-test to examine whether the between-category scores were significantly lower than the within-category scores. 
+
+For the MiniLM-L6-v2 embeddings, **88.3%** of ordered category pairs had lower between-category than within-category similarity scores. For the TFIDF weights, only **75.1%** of ordered category pairs met this criterion. Thus, we chose to encode our podcasts using the MiniLM-L6-v2 embeddings for the recommender app.
 
 ## Streamlit app <a name="streamlit"></a>
 
-The front-end is built in [Flask](https://flask.palletsprojects.com/en/2.1.x/).
-To build and run the web-server, navigate to [web_interface](web_interface), and run the following commands (from the project root directory) to reconstruct the data files and set up and start the server.
-```
-sh scripts/reconstruct_large_data_files.sh
-poetry env use python3.8
-poetry install
-poetry shell
-flask run
-```
-Click on [this link](http://app.sayantankhan.io/search) to go to the hosted version of the web-interface.
+The front-end is built using [Streamlit](https://streamlit.io/). The code for the app is [here](https://github.com/adityac95/erdos_spotify_podcast_rec/blob/main/app.py).
+
+There are two ways the app can be used:
+1. A user can specify an episode they've already heard and they will receive recommendations for up to 20 similar podcast episodes from the same category, excluding other episodes from the same show. This is achieved by indexing into pre-generated cosine similarity tables and filtering by the show ID.
+2. A user can type in a search query for an episode and they will receive up to 20 recommendations for episodes from all possible categories. This is achieved by generating the embedding for the query, $e_q$, computing the cosine similarity between $e_q$ and all ~40,000 podcasts, and returning the episodes with the highest similarity scores.
+
+A demonstration of the app is available [here](TODO:YOUTUBE_LINK). Currently this app is not available on a web server; we are working to deploy it! 
