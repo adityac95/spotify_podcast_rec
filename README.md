@@ -54,7 +54,9 @@ We reasoned that a good encoding would on average rate episodes from different c
 2. For every *ordered* pair of categories $A$ and $B$, we computed the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) between every episode in $A$ with every episode in $B$ (between-category similarities), as well as every episode in $A$ with every other episode in $A$ (within-category similarities).
 3. The between- and within-category similarity scores were compared using a one-tailed *t*-test to examine whether the between-category scores were significantly lower than the within-category scores. 
 
-For the MiniLM-L6-v2 embeddings, **88.3%** of ordered category pairs had lower between-category than within-category similarity scores. For the TFIDF weights, only **75.1%** of ordered category pairs met this criterion. Thus, we chose to encode our podcasts using the MiniLM-L6-v2 embeddings for the recommender app.
+Code for these steps is available [here](https://github.com/adityac95/erdos_spotify_podcast_rec/blob/main/embedding_exploratory.ipynb).
+
+For the MiniLM-L6-v2 embeddings, **88.3%** of ordered category pairs had lower between-category than within-category similarity scores. For the TFIDF weights, only **75.1%** of ordered category pairs met this criterion. Thus, we chose to encode our podcasts using the MiniLM-L6-v2 embeddings for the recommender app. 
 
 ## Streamlit app <a name="streamlit"></a>
 
