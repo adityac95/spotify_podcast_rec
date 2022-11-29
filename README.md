@@ -24,13 +24,15 @@ We used a [podcast dataset provided by Spotify](https://podcastsdataset.byspotif
 
 ## Preprocessing and cleanup <a name="preprocessing"></a>
 
-The transcript cleaning took place in this notebook.
+The transcript cleaning and category extraction took place in this [notebook](TODO: LINK HERE). 
 
-### Transcripts
+### Transcripts <a name="transcripts"></a>
 
-The provided transcripts were stored in JSON files and were split up into chunks. 
+The provided transcripts were stored in JSON files. The JSON files contained chunks of text that were automatically transcribed from the audio, together with an estimate of the confidence in the transcription, word-level time alignment, and (on occasion) alternative transcriptions. For each podcast episode, we extracted the subsections of the transcript and concatenated them together to generate the full text.
 
-### Podcast categories
+### Podcast categories <a name="categories"></a>
+
+Each show in the podcast dataset came with RSS feeds in XML format. These RSS feeds contained a lot of metadata, including the categories that the podcaster assigned to the show. These categories were extracted using the `BeautifulSoup` library  
 
 ## Encoding the transcripts <a name="encoding"></a>
 
