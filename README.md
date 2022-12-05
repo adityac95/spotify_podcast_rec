@@ -34,7 +34,7 @@ The provided transcripts were stored in JSON files. The JSON files contained chu
 
 Each show in the podcast dataset came with RSS feeds in XML format. These RSS feeds contained a lot of metadata, including the categories that the podcaster assigned to the show (which were chosen according to a set of categories provided by [Apple](https://podcasts.apple.com/us/genre/podcasts/id26)). These categories were extracted using the `BeautifulSoup` library.
 
-The categories themselves contained widely varying numbers of shows and were of differing levels of granularity. However, the iTunes categorisation system is hierarchical (for instance, baseball and basketball podcasts are listed under the "Sports" category). Mapping the granular subcategories from the original data to the parent categories in Apple resulted in a reduction in the number of categories from 117 to 19, a far more tractable number for our purposes. This recategorisation procedure is detailed in [this notebook](https://github.com/adityac95/spotify_podcast_rec/blob/main/transcript_tagging_embedding_CLEAN.ipynb).
+The categories themselves contained widely varying numbers of shows and were of differing levels of granularity. However, the iTunes categorisation system is hierarchical (for instance, baseball and basketball podcasts are listed under the "Sports" category). Mapping the granular subcategories from the original data to the parent categories in Apple resulted in a reduction in the number of categories from 117 to 19, a far more manageable number for our purposes. This recategorisation procedure is detailed in [this notebook](https://github.com/adityac95/spotify_podcast_rec/blob/main/transcript_tagging_embedding_CLEAN.ipynb).
 
 ## Encoding the transcripts <a name="encoding"></a>
 
