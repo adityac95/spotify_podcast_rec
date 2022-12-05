@@ -24,7 +24,7 @@ We used a [podcast dataset provided by Spotify](https://podcastsdataset.byspotif
 
 ## Preprocessing and cleanup <a name="preprocessing"></a>
 
-The majority of transcript cleaning and category extraction took place in [this notebook](https://github.com/adityac95/erdos_spotify_podcast_rec/blob/main/data_inspection_cleaning_CLEAN.ipynb). 
+The majority of transcript cleaning and category extraction took place in [this notebook](https://github.com/adityac95/spotify_podcast_rec/blob/main/data_inspection_cleaning_CLEAN.ipynb). 
 
 ### Transcripts <a name="transcripts"></a>
 
@@ -34,17 +34,17 @@ The provided transcripts were stored in JSON files. The JSON files contained chu
 
 Each show in the podcast dataset came with RSS feeds in XML format. These RSS feeds contained a lot of metadata, including the categories that the podcaster assigned to the show (which were chosen according to a set of categories provided by [Apple](https://podcasts.apple.com/us/genre/podcasts/id26)). These categories were extracted using the `BeautifulSoup` library.
 
-The categories themselves contained widely varying numbers of shows and were of differing levels of granularity. However, the iTunes categorisation system is hierarchical (for instance, baseball and basketball podcasts are listed under the "Sports" category). Mapping the granular subcategories from the original data to the parent categories in Apple resulted in a reduction in the number of categories from 117 to 19, a far more tractable number for our purposes. This recategorisation procedure is detailed in [this notebook](https://github.com/adityac95/erdos_spotify_podcast_rec/blob/main/transcript_tagging_embedding_CLEAN.ipynb).
+The categories themselves contained widely varying numbers of shows and were of differing levels of granularity. However, the iTunes categorisation system is hierarchical (for instance, baseball and basketball podcasts are listed under the "Sports" category). Mapping the granular subcategories from the original data to the parent categories in Apple resulted in a reduction in the number of categories from 117 to 19, a far more tractable number for our purposes. This recategorisation procedure is detailed in [this notebook](https://github.com/adityac95/spotify_podcast_rec/blob/main/transcript_tagging_embedding_CLEAN.ipynb).
 
 ## Encoding the transcripts <a name="encoding"></a>
 
 ### TFIDF and MiniLM-L6-v2 <a name="options"></a>
 
-We explored two different encodings for our podcast transcripts: term frequency-inverse document frequency (TFIDF) scores and transcript embeddings from a transformer model (MiniLM-L6-v2).[^2] The TFIDF weights were computed for the top ??? most commonly occurring words in the dataset, excluding stopwords. The 384-dimensional MiniLM-L6-v2 embeddings were computed using the pretrained model provided by the [`sentence_transformers`](https://www.sbert.net/) library.
+We explored two different encodings for our podcast transcripts: term frequency-inverse document frequency (TFIDF) scores and transcript embeddings from a transformer model (MiniLM-L6-v2).[^2] The TFIDF weights were computed for the top 1000 most commonly occurring words in the dataset, excluding stopwords. The 384-dimensional MiniLM-L6-v2 embeddings were computed using the pretrained model provided by the [`sentence_transformers`](https://www.sbert.net/) library.
 
 [^2]: Information about the MiniLM model is available [here](https://arxiv.org/pdf/2002.10957.pdf).
 
-[This notebook](TODO:REPLACE) generates the TFIDF weights, and [this notebook](https://github.com/adityac95/erdos_spotify_podcast_rec/blob/main/transcript_tagging_embedding_CLEAN.ipynb) generates the MiniLM-L6-v2 embeddings.
+[This notebook](https://github.com/adityac95/spotify_podcast_rec/blob/main/transcript_tagging_tfidf_embedding.ipynb) generates the TFIDF weights, and [this notebook](https://github.com/adityac95/spotify_podcast_rec/blob/main/transcript_tagging_embedding_CLEAN.ipynb) generates the MiniLM-L6-v2 embeddings.
 
 ### Evaluation <a name="evaluation"></a>
 
@@ -54,13 +54,13 @@ We reasoned that a good encoding would on average rate episodes from different c
 2. For every *ordered* pair of categories $A$ and $B$, we computed the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) between every episode in $A$ with every episode in $B$ (between-category similarities), as well as every episode in $A$ with every other episode in $A$ (within-category similarities).
 3. The between- and within-category similarity scores were compared using a one-tailed *t*-test to examine whether the between-category scores were significantly lower than the within-category scores. 
 
-Code for these steps is available [here](https://github.com/adityac95/erdos_spotify_podcast_rec/blob/main/embedding_exploratory.ipynb).
+Code for these steps is available [here](https://github.com/adityac95/spotify_podcast_rec/blob/main/embedding_exploratory.ipynb).
 
 For the MiniLM-L6-v2 embeddings, **88.3%** of ordered category pairs had lower between-category than within-category similarity scores. For the TFIDF weights, only **75.1%** of ordered category pairs met this criterion. Thus, we chose to encode our podcasts using the MiniLM-L6-v2 embeddings for the recommender app. 
 
 ## Streamlit app <a name="streamlit"></a>
 
-The front-end is built using [Streamlit](https://streamlit.io/). The code for the app is [here](https://github.com/adityac95/erdos_spotify_podcast_rec/blob/main/app.py).
+The front-end is built using [Streamlit](https://streamlit.io/). The code for the app is [here](https://github.com/adityac95/spotify_podcast_rec/blob/main/app.py).
 
 There are two ways the app can be used:
 1. A user can specify an episode they've already heard and they will receive recommendations for up to 20 similar podcast episodes from the same category, excluding other episodes from the same show. This is achieved by indexing into pre-generated cosine similarity tables and filtering by the show ID.
