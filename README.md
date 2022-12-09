@@ -66,4 +66,4 @@ There are two ways the app can be used:
 1. A user can specify an episode they've already heard and they will receive recommendations for up to 20 similar podcast episodes from the same category, excluding other episodes from the same show. This is achieved by indexing into pre-generated cosine similarity tables and filtering by the show ID.
 2. A user can type in a search query for an episode and they will receive up to 20 recommendations for episodes from all possible categories. This is achieved by generating the embedding for the query, $e_q$, computing the cosine similarity between $e_q$ and all ~40,000 podcasts, and returning the episodes with the highest similarity scores.
 
-A demonstration of the app is available [here](TODO:YOUTUBE_LINK). Currently this app is not available on a web server; we are working to deploy it! 
+A demonstration of the app is available at the end of [this video](https://drive.google.com/file/d/1mCbqtE9N9wT4p8GZIDmSsVs36f72tW3C/view?usp=share_link). Currently this app is not available on a web server; we are working to deploy it! 
