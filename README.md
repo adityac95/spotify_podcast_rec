@@ -1,7 +1,8 @@
 # Spotify podcast recommendation engine
 by Aditya Chander, Ritika Khurana, Taylor Mahler and Yuchen Luo
 
-We built a podcast recommendation engine that suggests episodes to a listener based on either a previous episode that they've heard or an episode description that they can input with freeform text entry. This project was built for the Erdos Institute Data Science bootcamp, Fall 2022.
+We built a podcast recommendation engine that suggests episodes to a listener based on either a previous episode that they've heard or an episode description that they can input with freeform text entry. This project was built for the Erdos Institute Data Science bootcamp, Fall 2022, and was awarded 1st prize.
+
 ***
 
 In the README, we describe the data gathering process, the preprocessing and cleanup, the chosen encodings of the pocasts, and the Streamlit app.
